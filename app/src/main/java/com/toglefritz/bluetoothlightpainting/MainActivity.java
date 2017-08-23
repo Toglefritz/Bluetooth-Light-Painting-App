@@ -1,9 +1,21 @@
 /*
     Author:  Toglefritz
 
-    Description:
+    Description: This Android application allows the strength of a Bluetooth signal to be
+        visualized in a long-exposure photograph. When connected to a Bluetooth device, five
+        dots on the screen change color according to the strength of the Bluetooth signal (RSSI).
+        When the signal is weak, the color is mostly blue, when the signal is strong, the signal is
+        mostly red, and at intermediate signal strengths, the color is mostly green. By moving the
+        phone around in the space around a Bluetooth device, while being recorded in a long
+        exposure photograph, the result is a kind of heat map of Bluetooth signal strength.
 
     Instructions for Use:
+        1. Open the application and, when prompted, connect to the desired Bluetooth device.
+        2. Set a camera to a long exposure (bulb) setting and open  the shutter.
+        3. Move the phone around in the space surrounding the Bluetooth device, within the camera's
+           field of vision.
+        4. Close the camera shutter when desired, or after a set long exposure time as elapsed.
+        5. Post-process the long-exposure photographs as desired.
 */
 
 package com.toglefritz.bluetoothlightpainting;
