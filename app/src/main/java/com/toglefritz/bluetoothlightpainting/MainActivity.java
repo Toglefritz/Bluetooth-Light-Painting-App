@@ -67,8 +67,8 @@ public class MainActivity extends AppCompatActivity  {
     // You may wish to change these values to suit your own devices.
     // Note that RSSI values are actually negative. Therefore, when we look at the absolute value
     // of the RSSI value, a lower number indicates a stronger signal.
-    long rssiMin = 20;
-    long rssiMax = 2;
+    long rssiMin = 12;
+    long rssiMax = 1;
 
     // This variable is used to convert RSSI values to color values
     long mappedRSSI = 0;
@@ -382,5 +382,3 @@ public class MainActivity extends AppCompatActivity  {
 }
 
 // TODO: 8/23/2017  Add menu for changing RSSI bounds while app is running
-// TODO: 8/23/2017  Add ability to change brush dots
-// TODO: 8/23/2017  Add a button to restart the app 
