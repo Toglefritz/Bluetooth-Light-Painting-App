@@ -113,8 +113,9 @@ public class MainActivity extends AppCompatActivity  {
         final ImageView cbrush3 = (ImageView) findViewById(R.id.cbrush3);
         final ImageView cbrush4 = (ImageView) findViewById(R.id.cbrush4);
         final ImageView cbrush5 = (ImageView) findViewById(R.id.cbrush5);
+        final ImageView scbrush1 = (ImageView) findViewById(R.id.scbrush1);
         final ImageView[] brushes = new ImageView[]{sbrush1, sbrush2, sbrush3, sbrush4, sbrush5,
-                cbrush1, cbrush2, cbrush3, cbrush4, cbrush5};
+                cbrush1, cbrush2, cbrush3, cbrush4, cbrush5, scbrush1};
 
         /*
          To work with Bluetooth, we need to first establish a programatic connection with
