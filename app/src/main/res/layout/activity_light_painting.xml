@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/mainView"
+    tools:context="com.toglefritz.bluetoothlightpainting.MainActivity"
+    android:background="@android:color/black">
+
+
+    <ImageView
+        android:id="@+id/brush5"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="32dp"
+        app:layout_constraintTop_toBottomOf="@+id/brush4"
+        app:srcCompat="@drawable/square"
+        android:layout_marginLeft="8dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginRight="8dp"
+        app:layout_constraintRight_toRightOf="parent"
+        android:tint="@color/colorPrimary" />
+
+    <ImageView
+        android:id="@+id/brush4"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        app:srcCompat="@drawable/square"
+        android:layout_marginTop="32dp"
+        app:layout_constraintTop_toBottomOf="@+id/brush3"
+        android:layout_marginLeft="8dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginRight="8dp"
+        app:layout_constraintRight_toRightOf="parent"
+        android:tint="@color/colorPrimary" />
+
+    <ImageView
+        android:id="@+id/brush3"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        app:srcCompat="@drawable/square"
+        android:layout_marginLeft="8dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginRight="8dp"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginBottom="8dp"
+        android:tint="@color/colorPrimary" />
+
+    <ImageView
+        android:id="@+id/brush2"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        app:srcCompat="@drawable/square"
+        android:layout_marginBottom="32dp"
+        app:layout_constraintBottom_toTopOf="@+id/brush3"
+        android:layout_marginLeft="8dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginRight="8dp"
+        app:layout_constraintRight_toRightOf="parent"
+        android:tint="@color/colorPrimary" />
+
+    <ImageView
+        android:id="@+id/brush1"
+        android:layout_width="0dp"
+        android:layout_height="40dp"
+        android:layout_marginBottom="32dp"
+        app:layout_constraintBottom_toTopOf="@+id/brush2"
+        app:srcCompat="@drawable/square"
+        android:layout_marginLeft="8dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginRight="8dp"
+        app:layout_constraintRight_toRightOf="parent"
+        android:tint="@color/colorPrimary" />
+</android.support.constraint.ConstraintLayout>
