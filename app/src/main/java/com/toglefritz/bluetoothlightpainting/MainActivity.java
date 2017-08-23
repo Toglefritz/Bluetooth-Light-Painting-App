@@ -43,8 +43,10 @@ import android.os.Bundle;
 import android.support.v7.view.menu.MenuAdapter;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
+import android.widget.ViewFlipper;
 
 import java.io.IOException;
 import java.net.Socket;
@@ -87,15 +89,32 @@ public class MainActivity extends AppCompatActivity  {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_light_painting);
+        setContentView(R.layout.activity_light_painting_flipper);
+
+        // The app includes the ability to swtich the style of dots used for light painting by
+        // clicking an icon in the lower-right corner of the screen.
+        Button viewSwitcher = (Button) findViewById(R.id.viewSwitcher);
+        final ViewFlipper flipper = (ViewFlipper) findViewById(R.id.flipper);
+        viewSwitcher.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                // When the view switcher button is clicked, change the layout ViewFlipper
+                flipper.showNext();
+            }
+        });
 
         // We have five dots that are colored according to the RSSI value
-        final ImageView brush1 = (ImageView) findViewById(R.id.brush1);
-        final ImageView brush2 = (ImageView) findViewById(R.id.brush2);
-        final ImageView brush3 = (ImageView) findViewById(R.id.brush3);
-        final ImageView brush4 = (ImageView) findViewById(R.id.brush4);
-        final ImageView brush5 = (ImageView) findViewById(R.id.brush5);
-        final ImageView[] brushes = new ImageView[]{brush1, brush2, brush3, brush4, brush5};
+        final ImageView sbrush1 = (ImageView) findViewById(R.id.sbrush1);
+        final ImageView sbrush2 = (ImageView) findViewById(R.id.sbrush2);
+        final ImageView sbrush3 = (ImageView) findViewById(R.id.sbrush3);
+        final ImageView sbrush4 = (ImageView) findViewById(R.id.sbrush4);
+        final ImageView sbrush5 = (ImageView) findViewById(R.id.sbrush5);
+        final ImageView cbrush1 = (ImageView) findViewById(R.id.cbrush1);
+        final ImageView cbrush2 = (ImageView) findViewById(R.id.cbrush2);
+        final ImageView cbrush3 = (ImageView) findViewById(R.id.cbrush3);
+        final ImageView cbrush4 = (ImageView) findViewById(R.id.cbrush4);
+        final ImageView cbrush5 = (ImageView) findViewById(R.id.cbrush5);
+        final ImageView[] brushes = new ImageView[]{sbrush1, sbrush2, sbrush3, sbrush4, sbrush5,
+                cbrush1, cbrush2, cbrush3, cbrush4, cbrush5};
 
         /*
          To work with Bluetooth, we need to first establish a programatic connection with
