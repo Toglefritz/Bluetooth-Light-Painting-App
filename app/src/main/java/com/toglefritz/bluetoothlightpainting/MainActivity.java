@@ -42,6 +42,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.view.menu.MenuAdapter;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -62,6 +63,9 @@ public class MainActivity extends AppCompatActivity  {
 
     // Create a constant variable to store a tag to idenfity messages in the log
     private static final String TAG = MainActivity.class.getName();
+
+    private float x1,x2;
+    static final int MIN_DISTANCE = 150;
 
     // These two variables are used to configure the bounds of the RSSI values.
     // You may wish to change these values to suit your own devices.
@@ -90,17 +94,6 @@ public class MainActivity extends AppCompatActivity  {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_light_painting_flipper);
-
-        // The app includes the ability to swtich the style of dots used for light painting by
-        // clicking an icon in the lower-right corner of the screen.
-        Button viewSwitcher = (Button) findViewById(R.id.viewSwitcher);
-        final ViewFlipper flipper = (ViewFlipper) findViewById(R.id.flipper);
-        viewSwitcher.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                // When the view switcher button is clicked, change the layout ViewFlipper
-                flipper.showNext();
-            }
-        });
 
         // We have five dots that are colored according to the RSSI value
         final ImageView sbrush1 = (ImageView) findViewById(R.id.sbrush1);
@@ -293,6 +286,40 @@ public class MainActivity extends AppCompatActivity  {
                             | View.SYSTEM_UI_FLAG_FULLSCREEN
                             | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
         }
+    }
+
+    // This function catches and interprets swipes on the screen. Swiping left or right is used
+    // to chage the type of brush used. Swipes left or right switch the views forwards or backwards.
+    public boolean onTouchEvent(MotionEvent event) {
+        // Get the ViewFlipper from the layout
+        final ViewFlipper flipper = (ViewFlipper) findViewById(R.id.flipper);
+
+        // When the user swipes the screen, figure out the gesture
+        switch(event.getAction()) {
+            // Get the starting position of the swipe
+            case MotionEvent.ACTION_DOWN:
+                x1 = event.getX();
+                break;
+            // Get the ending position of the swipe and compare it to the starting position
+            // to determine if the swipe was L2R or R2L
+            case  MotionEvent.ACTION_UP:
+                x2 = event.getX();
+                float deltaX = x2 - x1;
+                // If the distance of the swipe was greater than the threshold distance
+                if (Math.abs(deltaX) > MIN_DISTANCE) {
+                    // L2R swipe
+                    if(deltaX > 0) {
+                        flipper.showPrevious();
+                    }
+                    // R2L swipe
+                    else if(deltaX < 0) {
+                        flipper.showNext();
+                    }
+                }
+                break;
+        }
+
+        return super.onTouchEvent(event);
     }
 
     // This is a callback for the BluetoothGatt connection
