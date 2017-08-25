@@ -64,14 +64,16 @@ public class MainActivity extends AppCompatActivity  {
     // Create a constant variable to store a tag to idenfity messages in the log
     private static final String TAG = MainActivity.class.getName();
 
-    private float x1,x2;
+    // These three variables are used to capture and interpret swipes on the screen, used to
+    // switch the type of brush used.
+    private float x1,x2, y1, y2;
     static final int MIN_DISTANCE = 150;
 
     // These two variables are used to configure the bounds of the RSSI values.
     // You may wish to change these values to suit your own devices.
     // Note that RSSI values are actually negative. Therefore, when we look at the absolute value
     // of the RSSI value, a lower number indicates a stronger signal.
-    long rssiMin = 12;
+    long rssiMin = 15;
     long rssiMax = 1;
 
     // This variable is used to convert RSSI values to color values
@@ -290,6 +292,8 @@ public class MainActivity extends AppCompatActivity  {
 
     // This function catches and interprets swipes on the screen. Swiping left or right is used
     // to chage the type of brush used. Swipes left or right switch the views forwards or backwards.
+    // Swipes up and down are used to adjust the minimum RSSI value for adjusting the scaling
+    // of the colors.
     public boolean onTouchEvent(MotionEvent event) {
         // Get the ViewFlipper from the layout
         final ViewFlipper flipper = (ViewFlipper) findViewById(R.id.flipper);
@@ -299,21 +303,52 @@ public class MainActivity extends AppCompatActivity  {
             // Get the starting position of the swipe
             case MotionEvent.ACTION_DOWN:
                 x1 = event.getX();
+                y1 = event.getY();
                 break;
             // Get the ending position of the swipe and compare it to the starting position
-            // to determine if the swipe was L2R or R2L
+            // to determine if the swipe was L2R, R2L, upwards, or downwards
             case  MotionEvent.ACTION_UP:
                 x2 = event.getX();
+                y2 = event.getY();
+                // Change in X
                 float deltaX = x2 - x1;
+                // Change in Y
+                float deltaY = y2 - y1;
+
                 // If the distance of the swipe was greater than the threshold distance
-                if (Math.abs(deltaX) > MIN_DISTANCE) {
-                    // L2R swipe
-                    if(deltaX > 0) {
-                        flipper.showPrevious();
+                if (Math.abs(deltaX) > MIN_DISTANCE || Math.abs(deltaY) > MIN_DISTANCE) {
+                    // If the change in X was greater than the change in Y, we had a
+                    // horizontal swipe
+                    if(Math.abs(deltaX) >= Math.abs(deltaY)) {
+                        // L2R swipe
+                        if (deltaX > 0) {
+                            flipper.showPrevious();
+                        }
+                        // R2L swipe
+                        else if (deltaX < 0) {
+                            flipper.showNext();
+                        }
                     }
-                    // R2L swipe
-                    else if(deltaX < 0) {
-                        flipper.showNext();
+                    // If the change in Y was greater than the change in X, we had a
+                    // vertical swipe
+                    else if (Math.abs(deltaY) > Math.abs(deltaX)) {
+                        // Downward swipe
+                        if(deltaY > 0) {
+                            rssiMin++;
+                            Toast.makeText(MainActivity.this, "Minimum RSSI: -" + rssiMin, Toast.LENGTH_SHORT).show();
+                        }
+                        // Upward swipe
+                        else if(deltaY < 0) {
+                            if(rssiMin > rssiMax + 5) {
+                                rssiMin--;
+                                Toast.makeText(MainActivity.this, "Minimum RSSI: -" + rssiMin,
+                                        Toast.LENGTH_SHORT).show();
+                            }
+                            else {
+                                Toast.makeText(MainActivity.this, "Minimum RSSI cannot be increased " +
+                                        "further.", Toast.LENGTH_SHORT).show();
+                            }
+                        }
                     }
                 }
                 break;
@@ -407,5 +442,3 @@ public class MainActivity extends AppCompatActivity  {
         startActivity(i);
     }
 }
-
-// TODO: 8/23/2017  Add menu for changing RSSI bounds while app is running
