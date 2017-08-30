@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/menuGallery"
+        android:title="Gallery"
+        android:icon="@drawable/ic_photo_black_24dp"/>
+    <item android:id="@+id/menuInstructions"
+        android:title="Instructions"
+        android:icon="@drawable/ic_description_black_24dp"/>
+    <item android:id="@+id/menuSource"
+        android:title="Source"
+        android:icon="@drawable/ic_settings_ethernet_black_24dp"/>
+</menu>
