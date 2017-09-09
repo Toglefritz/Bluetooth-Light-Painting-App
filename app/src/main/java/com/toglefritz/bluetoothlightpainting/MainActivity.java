@@ -50,6 +50,8 @@ import android.widget.Toast;
 import android.widget.ViewFlipper;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Set;
@@ -91,6 +93,8 @@ public class MainActivity extends AppCompatActivity  {
 
     // This variable is used to create a socket for Bluetooth communication
     BluetoothSocket mSocket = null;
+
+    BluetoothDevice mdevice;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -134,78 +138,90 @@ public class MainActivity extends AppCompatActivity  {
         for (final BluetoothDevice device : pairedDevices) {
             String deviceName = device.getName();
             String deviceHardwareAddress = device.getAddress(); // MAC address
-            //Log.d(TAG, "Bluetooth device found: " + deviceName);
 
-            // If the name of the current Bluetooth device matches the one chosen in the
-            // BluetoothSelectActivity, connect to that device
-            if(device.getName().equals(selectedDevice)) {
-                UUID uuid = UUID.fromString("00001101-0000-1000-8000-00805f9b34fb");
-                try {
-                    mSocket = device.createRfcommSocketToServiceRecord(uuid);
-                    //Log.d(TAG, "Created socket");
-                } catch (IOException e) {
-                    //Log.e(TAG, "Failed to create socket");
-                }
-                try {
-                    mSocket.connect();
-                    //Log.d(TAG, "Successfully connected");
-                    //Toast.makeText(MainActivity.this, "I'm connected to " +
-                    //"Bluetooth!", Toast.LENGTH_LONG).show();
-
-                    // After a successful connection is made, set a timer
-                    // to measure the Bluetooth RSSI once per millisecond
-                    final BluetoothGatt mBluetoothGatt = device.connectGatt
-                            (MainActivity.this, false, mGattCallback);
-                    new Timer().schedule(new TimerTask() {
-                        public void run() {
-                            // Read Bluetooth RSSI. When this happens, it
-                            // triggers a call to the onReadRemoteRssi
-                            // function down below. It is inside that function
-                            // where the RSSI is mapped to a color value
-                            // for the dots on the phone screen.
-                            boolean readRssiFlag = mBluetoothGatt.readRemoteRssi();
-
-                            // Once we've measured the RSSI value mapped it
-                            // to a value for red, green, and blue, we can now
-                            // set the color of the dots on the screen to
-                            // that value
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    for (ImageView brush : brushes) {
-                                        brush.setColorFilter(Color.rgb(red, green, blue),
-                                                PorterDuff.Mode.SRC_ATOP);
-                                    }
-                                }
-                            });
-                        }
-                    }, 1, 1);
-                } catch (IOException e) {
-                    // We get here if the app fails to connect to a bonded Bluetooth
-                    // device. This is most likely because the selected device is
-                    // turned off or not within Bluetooth range. The user will be
-                    // prompted to check the device settings and afterwords, the
-                    // app will restart.
-                    //Log.e(TAG, "Failed to connect to Bluetooth");
-                    new AlertDialog.Builder(MainActivity.this)
-                            .setTitle("Connection failed!")
-                            .setMessage("I'm sorry. I did not manage to connect to your Bluetooth device.")
-                            .setPositiveButton("Check Settings", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int which) {
-                                    // Send user to the Bluetooth settings
-                                    startActivityForResult(new Intent(Settings.ACTION_BLUETOOTH_SETTINGS), 0);
-                                }
-                            })
-                            .setNegativeButton("Exit", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int which) {
-                                    // Close the app
-                                    System.exit(0);
-                                }
-                            })
-                            .setIcon(R.drawable.ic_error_black_24dp)
-                            .show();
-                }
+            if (device.getName().equals(selectedDevice)) {
+                mdevice = device;
+                mBluetoothAdapter.cancelDiscovery();
             }
+        }
+
+        // If the name of the current Bluetooth device matches the one chosen in the
+        // BluetoothSelectActivity, connect to that device
+        // Get the UUID for the device
+        UUID uuid = mdevice.getUuids()[0].getUuid();
+        Log.d(TAG, "" + uuid);
+
+
+        try {
+            // Always cancel discovery because it will slow down a connection
+            mBluetoothAdapter.cancelDiscovery();
+            // Create Bluetooth socket
+            mSocket = mdevice.createRfcommSocketToServiceRecord(uuid);
+            Log.d(TAG, "Created socket");
+        } catch (IOException e) {
+            Log.d(TAG, "Failed to create socket");
+        }
+        try {
+            Log.d(TAG, "Attempting to connect. Attempt 1.");
+            // Connect to the Bluetooth device
+            mSocket.connect();
+            Log.d(TAG, "Successfully connected");
+
+            // After a successful connection is made, set a timer
+            // to measure the Bluetooth RSSI once per millisecond
+            final BluetoothGatt mBluetoothGatt = mdevice.connectGatt
+                    (MainActivity.this, false, mGattCallback);
+            new Timer().schedule(new TimerTask() {
+                public void run() {
+                    // Read Bluetooth RSSI. When this happens, it
+                    // triggers a call to the onReadRemoteRssi
+                    // function down below. It is inside that function
+                    // where the RSSI is mapped to a color value
+                    // for the dots on the phone screen.
+                    boolean readRssiFlag = mBluetoothGatt.readRemoteRssi();
+
+                    // Once we've measured the RSSI value mapped it
+                    // to a value for red, green, and blue, we can now
+                    // set the color of the dots on the screen to
+                    // that value
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            for (ImageView brush : brushes) {
+                                // Set the color of the brushes
+                                brush.setColorFilter(Color.rgb(red, green, blue),
+                                        PorterDuff.Mode.SRC_ATOP);
+                            }
+                        }
+                    });
+                }
+            }, 1, 1);
+        }
+        catch (IOException e) {
+            // We get here if the app fails to connect to a bonded Bluetooth
+            // device. This is most likely because the selected device is
+            // turned off or not within Bluetooth range. The user will be
+            // prompted to check the device settings and afterwords, the
+            // app will restart.
+            Log.d(TAG, "" + e);
+            e.printStackTrace();
+            new AlertDialog.Builder(MainActivity.this)
+                    .setTitle("Connection failed!")
+                    .setMessage("I'm sorry. I did not manage to connect to your Bluetooth device.")
+                    .setPositiveButton("Check Settings", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            // Send user to the Bluetooth settings
+                            startActivityForResult(new Intent(Settings.ACTION_BLUETOOTH_SETTINGS), 0);
+                        }
+                    })
+                    .setNegativeButton("Exit", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            // Close the app
+                            System.exit(0);
+                        }
+                    })
+                    .setIcon(R.drawable.ic_error_black_24dp)
+                    .show();
         }
     }
 

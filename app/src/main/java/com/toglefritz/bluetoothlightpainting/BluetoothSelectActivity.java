@@ -115,6 +115,7 @@ public class BluetoothSelectActivity extends AppCompatActivity {
                             // where the user clicked
                             BluetoothDevice device = (BluetoothDevice) adapter.getItemAtPosition(position);
                             String deviceName = device.getName();
+                            Log.d(TAG, deviceName);
                             // Send the user to the MainActivity
                             Intent intent = new Intent(BluetoothSelectActivity.this, MainActivity.class);
                             // Send the name of the chosen Bluetooth device to the MainActivity
